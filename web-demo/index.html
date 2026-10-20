@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>鹦鹉播放器 ParrotPlayer · Web 高仿演示</title>
+  <!-- PWA / 添加到主屏幕（iPhone 上可作为独立 App 全屏使用） -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="鹦鹉播放器" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="icon" type="image/png" href="icon-180.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 手机比例容器：桌面浏览器中模拟手机 -->
+  <div id="phone">
+
+    <!-- ================= 媒体库页 ================= -->
+    <section class="page active" id="page-library">
+      <header class="lib-header">
+        <h1>媒体库</h1>
+        <div class="lib-actions">
+          <button id="btn-import-url" class="icon-btn" title="导入视频 URL" aria-label="导入视频 URL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          </button>
+          <button id="btn-cloud" class="icon-btn" title="网盘" aria-label="网盘">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 .3-9A7 7 0 0 0 4 15.2 3.5 3.5 0 0 0 4.5 19h13z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <input id="search-input" type="text" placeholder="搜索视频标题…" autocomplete="off" />
+      </div>
+
+      <div class="page-scroll" id="library-scroll">
+        <section class="section">
+          <h2 class="section-title">继续观看</h2>
+          <div class="continue-row" id="continue-row"></div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">全部视频 <span class="count-badge" id="video-count">0</span></h2>
+          <div class="poster-grid" id="poster-grid"></div>
+          <p class="grid-tip">长按（或右键）海报可收藏 / 删除 · 也可把本地视频文件拖到页面任意位置</p>
+        </section>
+      </div>
+
+      <button id="fab-add" class="fab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        添加视频
+      </button>
+    </section>
+
+    <!-- ================= 学习页 ================= -->
+    <section class="page" id="page-study">
+      <header class="lib-header">
+        <h1>学习</h1>
+      </header>
+      <div class="page-scroll">
+        <div class="stat-cards">
+          <div class="stat-card"><b id="stat-words">0</b><span>生词</span></div>
+          <div class="stat-card"><b id="stat-favs">0</b><span>收藏句</span></div>
+          <div class="stat-card"><b id="stat-notes">0</b><span>笔记</span></div>
+          <div class="stat-card"><b id="stat-shadow">0</b><span>跟读</span></div>
+        </div>
+
+        <div class="menu-card vocab-entry" id="btn-vocab-report">
+          <div class="menu-icon cyan">📊</div>
+          <div class="menu-body">
+            <b>词汇分析</b>
+            <span>查看分级词汇分布报告（四级 / 六级 / 考研 / 托福雅思 / GRE）</span>
+          </div>
+          <div class="menu-arrow">›</div>
+        </div>
+
+        <div class="menu-list">
+          <div class="menu-card" id="menu-wordbook">
+            <div class="menu-icon">📖</div>
+            <div class="menu-body"><b>生词本</b><span>播放时点击单词即可加入</span></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-card" id="menu-favorites">
+            <div class="menu-icon">⭐</div>
+            <div class="menu-body"><b>收藏句子</b><span>长按字幕行收藏，点击可跳转播放</span></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-card" id="menu-notes">
+            <div class="menu-icon">📝</div>
+            <div class="menu-body"><b>笔记</b><span>新建 / 编辑 / 删除学习笔记</span></div>
+            <div class="menu-arrow">›</div>
+          </div>
+          <div class="menu-card" id="menu-shadowing">
+            <div class="menu-icon">🎤</div>
+            <div class="menu-body"><b>跟读练习</b><span>播放原声 · 模拟录音 · 评分</span></div>
+            <div class="menu-arrow">›</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 设置页 ================= -->
+    <section class="page" id="page-settings">
+      <header class="lib-header">
+        <h1>设置</h1>
+      </header>
+      <div class="page-scroll">
+        <div class="settings-group">
+          <h3>播放</h3>
+          <div class="setting-row">
+            <div class="setting-label">默认倍速</div>
+            <div class="setting-control">
+              <input type="range" id="set-rate" min="0.5" max="2" step="0.25" value="1" />
+              <span class="range-val" id="set-rate-val">1.00×</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">记忆播放位置</div>
+            <div class="setting-control"><button class="switch on" id="set-remember" aria-label="记忆播放位置"></button></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>字幕</h3>
+          <div class="setting-row">
+            <div class="setting-label">默认显示模式</div>
+            <div class="setting-control segmented" id="set-mode">
+              <button data-v="bilingual" class="on">双语</button>
+              <button data-v="en">英文</button>
+              <button data-v="zh">中文</button>
+              <button data-v="off">隐藏</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">字幕字号</div>
+            <div class="setting-control">
+              <input type="range" id="set-size" min="13" max="22" step="1" value="16" />
+              <span class="range-val" id="set-size-val">16px</span>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">主字幕颜色</div>
+            <div class="setting-control color-dots" id="set-color">
+              <button class="color-dot on" data-v="#FFFFFF" style="background:#FFFFFF" title="白色"></button>
+              <button class="color-dot" data-v="#FFC107" style="background:#FFC107" title="鹦鹉黄"></button>
+              <button class="color-dot" data-v="#26C6DA" style="background:#26C6DA" title="强调青"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>学习</h3>
+          <div class="setting-row">
+            <div class="setting-label">点按单词时暂停</div>
+            <div class="setting-control"><button class="switch on" id="set-pauseword" aria-label="点按单词时暂停"></button></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">跟读评分严格度</div>
+            <div class="setting-control segmented" id="set-strict">
+              <button data-v="loose">宽松</button>
+              <button data-v="normal" class="on">标准</button>
+              <button data-v="strict">严格</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>手势</h3>
+          <div class="setting-row">
+            <div class="setting-label">启用手势控制</div>
+            <div class="setting-control"><button class="switch on" id="set-gestures" aria-label="启用手势控制"></button></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">双击快进 / 快退</div>
+            <div class="setting-control segmented" id="set-dbl">
+              <button data-v="5">5 秒</button>
+              <button data-v="10" class="on">10 秒</button>
+              <button data-v="15">15 秒</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>存储</h3>
+          <div class="setting-row">
+            <div class="setting-label">本地数据</div>
+            <div class="setting-control"><span class="static-val" id="set-cache">—</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">清空学习数据</div>
+            <div class="setting-control"><button class="danger-btn" id="btn-clear">清空</button></div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>关于</h3>
+          <div class="about-block">
+            <b>鹦鹉播放器 ParrotPlayer</b>
+            <p>Web 高仿演示版 v1.0.0（模仿「小鹦看看」）</p>
+            <p>深色沉浸式主题 · 主色 鹦鹉黄 #FFC107 · 强调青 #26C6DA</p>
+            <p>纯静态页面，零依赖；学习数据保存在浏览器 localStorage，与 iOS 版界面逻辑保持一致。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 底部 Tab ================= -->
+    <nav class="tabbar">
+      <button class="tab active" data-tab="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polygon points="10 9 15 12 10 15 10 9" fill="currentColor" stroke="none"/></svg>
+        <span>媒体库</span>
+      </button>
+      <button class="tab" data-tab="study">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h13"/></svg>
+        <span>学习</span>
+      </button>
+      <button class="tab" data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>设置</span>
+      </button>
+    </nav>
+
+    <!-- ================= 播放页覆盖层 ================= -->
+    <div id="player" class="hidden">
+      <div id="player-video-wrap">
+        <video id="video" playsinline preload="auto"></video>
+
+        <!-- 顶部细缓冲条 -->
+        <div id="buffer-bar"><div id="buffer-bar-fill"></div></div>
+
+        <!-- 手势层 -->
+        <div id="gesture-layer"></div>
+
+        <!-- 字幕显示区（视频区下方 1/4 处） -->
+        <div id="subtitle-layer">
+          <div id="sub-en" class="sub-line sub-primary"></div>
+          <div id="sub-zh" class="sub-line sub-secondary"></div>
+        </div>
+
+        <!-- 手势 HUD -->
+        <div id="hud" class="hidden"><div id="hud-icon"></div><div id="hud-text"></div></div>
+
+        <!-- 中央大播放按钮（暂停态显示） -->
+        <button id="center-play" class="hidden" aria-label="播放">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
+
+        <!-- 顶部控制条 -->
+        <div id="player-top-bar">
+          <button id="btn-back" class="icon-btn" aria-label="返回">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div id="player-title">标题</div>
+          <div class="top-actions">
+            <button id="btn-cast" class="icon-btn" aria-label="投屏" title="投屏">📡</button>
+            <button id="btn-pip" class="icon-btn" aria-label="画中画" title="画中画">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+            </button>
+            <button id="btn-lock" class="icon-btn" aria-label="锁定" title="锁定">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </button>
+            <button id="btn-more" class="icon-btn" aria-label="更多" title="更多">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 锁定态解锁按钮 -->
+        <button id="unlock-btn" class="hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.8-1"/></svg>
+          解锁
+        </button>
+      </div>
+
+      <!-- 底部控制面板 -->
+      <div id="player-bottom">
+        <div id="progress">
+          <div id="progress-track">
+            <div id="progress-buffered"></div>
+            <div id="progress-ab"></div>
+            <div id="progress-played"><div id="progress-thumb"></div></div>
+          </div>
+        </div>
+        <div class="time-row">
+          <span id="time-current">0:00</span>
+          <span id="time-rate-label" class="rate-hint">×1.0</span>
+          <span id="time-total">0:00</span>
+        </div>
+        <div class="controls-row">
+          <button id="btn-prev" class="ctl-btn" aria-label="上一句" title="上一句">
+            <svg viewBox="0 0 24 24"><path d="M6 5v14l9-7z" fill="currentColor"/><rect x="16.5" y="5" width="2.6" height="14" rx="0.6" fill="currentColor"/></svg>
+            <span>上一句</span>
+          </button>
+          <button id="btn-play" class="ctl-btn ctl-main" aria-label="播放/暂停">
+            <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <svg id="icon-pause" class="hidden" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>
+          </button>
+          <button id="btn-next" class="ctl-btn" aria-label="下一句" title="下一句">
+            <svg viewBox="0 0 24 24"><path d="M18 5v14l-9-7z" fill="currentColor"/><rect x="4.9" y="5" width="2.6" height="14" rx="0.6" fill="currentColor"/></svg>
+            <span>下一句</span>
+          </button>
+        </div>
+        <div class="controls-row secondary">
+          <button id="btn-rate" class="chip-btn">倍速 ×1.0</button>
+          <button id="btn-ab" class="chip-btn">AB 循环</button>
+          <button id="btn-sub" class="chip-btn">字幕</button>
+          <button id="btn-list" class="chip-btn">列表</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学习页子视图（生词本 / 收藏 / 笔记 / 跟读） -->
+    <div id="subview" class="hidden"></div>
+
+    <!-- 全局挂载点 -->
+    <div id="toast-host"></div>
+    <div id="context-menu-root"></div>
+    <div id="modal-root"></div>
+    <div id="sheet-root"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

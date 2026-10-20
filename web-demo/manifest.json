@@ -1,0 +1,19 @@
+{
+  "name": "鹦鹉播放器 ParrotPlayer",
+  "short_name": "鹦鹉播放器",
+  "description": "专为外语学习设计的视频播放器：双语字幕、即点即译、无级变速、AB 循环、词汇分析",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
